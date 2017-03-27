@@ -287,7 +287,7 @@ public class Game extends Applet implements Runnable {
 			repaint();
 
 			try {
-				Thread.sleep(20);
+				Thread.sleep(25);
 			} catch (InterruptedException e) {
 				
 			}
