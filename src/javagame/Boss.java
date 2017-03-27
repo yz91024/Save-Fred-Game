@@ -115,10 +115,18 @@ public class Boss extends GameObject {
 		g.setColor(Color.white);
 		g.drawRect(x-50, y-250, 200, 16);
 		if(faceLeft) {
-			attackLeft.drawAnimation(g, x-100, y-230,256,512);
+			if(isAttacking) {
+				attackLeft.drawAnimation(g, x-100, y-230,256,512);
+			} else {
+				g.drawImage(tex.boss[0], x-100, y-230, 256, 512,null);
+			}
 		}
 		if(faceRight){
-			attackRight.drawAnimation(g, x-100, y-230,256,512);
+			if(isAttacking) {
+				attackRight.drawAnimation(g, x-100, y-230,256,512);
+			}else {
+				g.drawImage(tex.boss[4], x-100, y-230, 256, 512,null);
+			}
 		}
 	}
 	
