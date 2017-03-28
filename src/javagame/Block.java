@@ -1,5 +1,6 @@
 package javagame;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
@@ -54,7 +55,6 @@ public class Block extends GameObject {
 			if (type == 1) {
 				g.drawImage(tex.block[1], x, y, 16,16,null);
 			}
-
 		}
 	}
 	

@@ -44,7 +44,7 @@ public class Player extends GameObject {
 		return new Rectangle(x, y, 16, 32);
 	}
 	public Rectangle getBoundsDown() {
-		return new Rectangle(x+4, y+16, 8, 16);
+		return new Rectangle(x+5, y+16, 6, 16);
 	}
 	public Rectangle getBoundsRight() {
 		return new Rectangle(x+10, y+2, 6, 28);
@@ -53,10 +53,7 @@ public class Player extends GameObject {
 		return new Rectangle(x, y+2, 6, 28);
 	}
 	public Rectangle getBoundsUp() {
-		return new Rectangle(x+4, y, 8, 16);
-	}
-	public Rectangle getGround() {
-		return new Rectangle(x+4, y+40, 8, 5);
+		return new Rectangle(x+5, y, 6, 16);
 	}
 
 	
@@ -129,10 +126,10 @@ public class Player extends GameObject {
 					}
 				}
 				if(getBounds().intersects(tempObject.getRightBounds())) {
-					x+=4;
+					x+=5;
 				}
 				if(getBounds().intersects(tempObject.getLeftBounds())) {
-					x-=4;
+					x-=5;
 				}
 			}
 			if (tempObject.getId() == ID.BasicEnemy) {

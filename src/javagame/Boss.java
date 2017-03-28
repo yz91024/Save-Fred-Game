@@ -13,6 +13,9 @@ public class Boss extends GameObject {
 	private SpriteAnimation deathAnimationLeft;
 	private SpriteAnimation deathAnimationRight;
 	
+	int playerX;
+	int playerY;
+	
 	int attackCount = 50;
 	int count = 20;
 	int deathCount = 50;
@@ -68,6 +71,9 @@ public class Boss extends GameObject {
 			return;
 		}
 		
+		move();
+		count--;
+		
 		if(isAttacking) {
 			if(faceLeft) {
 				attackLeft.runAnimation();
@@ -109,10 +115,18 @@ public class Boss extends GameObject {
 		g.setColor(Color.white);
 		g.drawRect(x-50, y-250, 200, 16);
 		if(faceLeft) {
-			attackLeft.drawAnimation(g, x-100, y-230,256,512);
+			if(isAttacking) {
+				attackLeft.drawAnimation(g, x-100, y-230,256,512);
+			} else {
+				g.drawImage(tex.boss[0], x-100, y-230, 256, 512,null);
+			}
 		}
 		if(faceRight){
-			attackRight.drawAnimation(g, x-100, y-230,256,512);
+			if(isAttacking) {
+				attackRight.drawAnimation(g, x-100, y-230,256,512);
+			}else {
+				g.drawImage(tex.boss[4], x-100, y-230, 256, 512,null);
+			}
 		}
 	}
 	
@@ -120,8 +134,10 @@ public class Boss extends GameObject {
 		for(int i = 0; i < handler.object.size(); i++) {
 			GameObject tempObject = handler.object.get(i);
 			if (tempObject.getId() == ID.Player) {
+				playerX = tempObject.getX();
+				playerY = tempObject.getY();
 				if (getTopBounds().intersects(tempObject.getBounds())) {
-					tempObject.x+=4;
+					tempObject.y-=4;
 					if(faceLeft) {
 						tempObject.x+=4;
 					}
@@ -132,5 +148,29 @@ public class Boss extends GameObject {
 			}
 		}
 	}
+	
+	//follow the player
+		public void move() {
+			if((x-playerX) < 300 && (x-playerX) > -300) {
+				if(x > playerX) {
+					//delay turn speed
+					if(count <=0) {
+						faceLeft = true;
+						faceRight = false;
+						count = 10;
+					}
+				}
+				if(x < playerX) {
+					if(count <=0) {
+						faceRight = true;
+						faceLeft = false;
+						count = 10;
+					}
+				}
+				isAttacking = true;
+			}else {
+				isAttacking = false;
+			}
+		}
 	
 }
