@@ -1,16 +1,14 @@
 package javagame;
 
-import java.applet.Applet;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 import javax.sound.sampled.AudioInputStream;
@@ -18,11 +16,14 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JFrame;
 
-public class Game extends Applet implements Runnable {
+public class Game extends Canvas implements Runnable {
 
 	private static final long serialVersionUID = -8630090107797765293L;
 
+	static Game game;
+	
 	//screen size
 	public static int WIDTH = 1080, HEIGHT = 720;
 	
@@ -36,8 +37,6 @@ public class Game extends Applet implements Runnable {
 	public static boolean respawn3 = false;
 	public static boolean respawn4 = false;
 	public static boolean respawn5 = false;
-	
-	Graphics dbg;
 	
 	public static boolean hasBegun = false;
 	
@@ -72,6 +71,10 @@ public class Game extends Applet implements Runnable {
 	public static int maxH2;
 	public static int maxW3;
 	public static int maxH3;
+	
+	//for double buffering
+	java.awt.Image dbImage;
+	Graphics dbg;
 	
 	BufferedImage cursorImg = null;
 	// Create a new blank cursor.
@@ -115,9 +118,6 @@ public class Game extends Applet implements Runnable {
 	
 	//two player
 	public static boolean twoPlayer = false;
-	
-	//for double buffering
-	Image dbImage;
 	
 	//how long cutscene goes
 	int storyCount = 1000;
@@ -170,7 +170,7 @@ public class Game extends Applet implements Runnable {
 		stick = loader.loadImage("/stick.png");
 		
 		beginAnimation = new Animation(80,fred,tex.story[0],tex.story[1],tex.story[2],tex.story[3],tex.story[4],tex.story[5]);
-		endAnimation = new Animation(80,fred,tex.story[6],tex.story[7],tex.story[8]);
+		endAnimation = new Animation(80,tex.story[6],tex.story[7],tex.story[8],tex.story[9]);
 		
 		maxW1 = level.getWidth();
 		maxH1 = level.getHeight();
@@ -198,7 +198,7 @@ public class Game extends Applet implements Runnable {
 	public void playMenu() {
 		AudioInputStream inputStream;
 		try {
-			inputStream = AudioSystem.getAudioInputStream(new File("My_Song_3.wav"));
+			inputStream = AudioSystem.getAudioInputStream(getClass().getResourceAsStream("/My_Song_3.wav"));
 			menuClip = AudioSystem.getClip();
 	        menuClip.open(inputStream);
 	        menuClip.loop(Clip.LOOP_CONTINUOUSLY);
@@ -214,7 +214,7 @@ public class Game extends Applet implements Runnable {
 	public void playGame() {
 		AudioInputStream inputStream;
 		try {
-			inputStream = AudioSystem.getAudioInputStream(new File("My_Song_8.wav"));
+			inputStream = AudioSystem.getAudioInputStream(getClass().getResourceAsStream("/My_Song_8.wav"));
 			gameClip = AudioSystem.getClip();
 	        gameClip.open(inputStream);
 	        gameClip.loop(Clip.LOOP_CONTINUOUSLY);
@@ -230,7 +230,7 @@ public class Game extends Applet implements Runnable {
 	public void playBoss() {
 		AudioInputStream inputStream;
 		try {
-			inputStream = AudioSystem.getAudioInputStream(new File("My_Song_6.wav"));
+			inputStream = AudioSystem.getAudioInputStream(getClass().getResourceAsStream("/My_Song_6.wav"));
 			gameClip = AudioSystem.getClip();
 	        gameClip.open(inputStream);
 	        gameClip.loop(Clip.LOOP_CONTINUOUSLY);
@@ -241,11 +241,6 @@ public class Game extends Applet implements Runnable {
 		} catch (LineUnavailableException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public synchronized void init()
-	{
-		setSize(WIDTH,HEIGHT);
 	}
 	
 	public synchronized void destroy()
@@ -272,8 +267,17 @@ public class Game extends Applet implements Runnable {
 		}
 	}
 	
+	public void update(Graphics g) {
+		dbImage = createImage(WIDTH,HEIGHT);
+		dbg = dbImage.getGraphics();
+		paint(dbg);
+		g.drawImage(dbImage, 0, 0, this);
+	}
+
+	
 	//run stuff
 	public void run() {
+		this.requestFocus();
 		/*
 		long lastTime = System.nanoTime();
 		double amountOfTicks = 60.0;
@@ -315,15 +319,9 @@ public class Game extends Applet implements Runnable {
 		stop();
 	}
 	
-	public void update(Graphics g) {
-		dbImage = createImage(WIDTH,HEIGHT);
-		dbg = dbImage.getGraphics();
-		paint(dbg);
-		g.drawImage(dbImage, 0, 0, this);
-	}
-	
 	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
+		
 		if (state == STATE.GAME || state == STATE.TUTORIAL) {
 			g.setColor(new Color(50,80,123));
 			g.fillRect(0, 0, WIDTH, HEIGHT);
@@ -369,6 +367,7 @@ public class Game extends Applet implements Runnable {
 			g.setFont(fnt0);
 			g.drawString("Press Space To Skip", 10, 20);
 		}
+		
 
 	}
 
@@ -379,31 +378,39 @@ public class Game extends Applet implements Runnable {
 		if(action == 1) {
 			g.drawImage(tint, 0, 0,WIDTH,HEIGHT, this);
 			g.drawString("Hey there! I'm Bob!", 250, 200);
+			g.drawString("Press Space to continue", 500, 500);
 		}else if(action == 2) {
 			g.drawImage(tint, 0, 0,WIDTH,HEIGHT, this);
 			g.drawString("You seem new to this", 260, 180);
 			g.drawString("game so I'll show you around!", 210, 210);
+			g.drawString("Press Space to continue", 500, 500);
 		}else if(action == 3) {
 			g.drawImage(tint, 0, 0,WIDTH,HEIGHT, this);
 			g.drawString("Use the arrow keys", 260, 180);
 			g.drawString("to move around.", 270, 210);
+			g.drawString("Press Space to continue", 500, 500);
 		}else if(action == 4) {
 			g.drawImage(tint, 0, 0,WIDTH,HEIGHT, this);
 			g.drawString("Press down to", 260, 180);
 			g.drawString("pick things up", 270, 210);
+			g.drawString("Press Space to continue", 500, 500);
 		}else if(action == 5) {
 			g.drawImage(tint, 0, 0,WIDTH,HEIGHT, this);
 			g.drawString("and go into portals.", 260, 200);
+			g.drawString("Press Space to continue", 500, 500);
 		}else if(action == 6) {
 			g.drawImage(tint, 0, 0,WIDTH,HEIGHT, this);
 			g.drawString("To go into portals", 260, 180);
 			g.drawString("you need the key.", 270, 210);
+			g.drawString("Press Space to continue", 500, 500);
 		}else if(action == 7) {
 			g.drawImage(tint, 0, 0,WIDTH,HEIGHT, this);
 			g.drawString("Why don't you give", 260, 150);
 			g.drawString("it a try and", 270, 180);
 			g.drawString("finish this level?", 250, 210);
+			g.drawString("Press Space to continue", 500, 500);
 		}else if(action == 8) {
+			g.drawString("Press Space to continue", 500, 500);
 			g.drawImage(tint, 0, 0,WIDTH,HEIGHT, this);
 			g.drawString("Don't touch lava!", 260, 200);
 			g.drawImage(tex.block[1], 500, 300,100,100, this);
@@ -411,12 +418,14 @@ public class Game extends Applet implements Runnable {
 			state = STATE.GAME;
 		}else if(action == 10) {
 			g.drawImage(tint, 0, 0,WIDTH,HEIGHT, this);
+			g.drawString("Press Space to continue", 500, 500);
 			g.drawString("Uh oh. Those guys", 260, 180);
 			g.drawString("look dangerous.", 270, 210);
 			g.drawImage(tex.enemy[0], 700, 400,25,50, this);
 		}else if(action == 11) {
 			g.drawImage(tint, 0, 0,WIDTH,HEIGHT, this);
 			g.drawString("Here! Take this stick", 260, 150);
+			g.drawString("Press Space to continue", 500, 500);
 			g.drawString("to protect yourself.", 270, 180);
 			g.drawString("Press Space to use it!", 250, 210);
 			g.drawImage(stick, 500, 300,100,100, this);
@@ -424,6 +433,7 @@ public class Game extends Applet implements Runnable {
 			state = STATE.GAME;
 		}else if(action == 13) {
 			g.drawImage(tint, 0, 0,WIDTH,HEIGHT, this);
+			g.drawString("Press Space to continue", 500, 500);
 			g.drawString("So, you're trying to", 260, 150);
 			g.drawString("save your friend", 270, 180);
 			g.drawString("from the ninja dudes?", 270, 210);
@@ -431,6 +441,7 @@ public class Game extends Applet implements Runnable {
 		}else if(action == 14) {
 			g.drawImage(tint, 0, 0,WIDTH,HEIGHT, this);
 			g.drawString("Good luck!", 260, 180);
+			g.drawString("Press Space to continue", 500, 500);
 		}else if(action == 15) {
 			state = STATE.GAME;
 		}else if(action == 16) {
@@ -440,11 +451,13 @@ public class Game extends Applet implements Runnable {
 			g.drawString("the key to the portal.", 270, 210);
 			g.drawString("Try hitting him from behind.", 240, 240);
 			g.drawImage(tex.boss[0], 600, 250,256,512, this);
+			g.drawString("Press Space to continue", 500, 500);
 		}else if(action == 17) {
 			state = STATE.GAME;
 		}else if(action == 18) {
 			g.drawImage(tint, 0, 0,WIDTH,HEIGHT, this);
 			g.drawString("Look! It's your friend!", 260, 180);
+			g.drawString("Press Space to continue", 500, 500);
 		}else if(action == 19) {
 			state = STATE.END;
 		}
@@ -656,9 +669,16 @@ public class Game extends Applet implements Runnable {
 	
 	
 	
-	//public static void main(String args[]) {
-	//	game = new Game();
-	//}
-	
+	public static void main(String args[]) {
+		game = new Game();
+		JFrame frame = new JFrame("Save Fred!");
+		frame.setSize(WIDTH,HEIGHT);
+		frame.setResizable(false);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.add(game);
+		frame.setVisible(true);
+		game.start();
+	}
 	
 }

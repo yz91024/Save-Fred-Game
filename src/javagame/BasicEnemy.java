@@ -1,5 +1,6 @@
 package javagame;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
@@ -184,6 +185,13 @@ public class BasicEnemy extends GameObject {
 		
 		if(dead)
 			return;
+		
+		g.setColor(Color.gray);
+		g.fillRect(x-4, y-8, 20, 3);
+		g.setColor(Color.RED);
+		g.fillRect(x-4, y-8, Health, 3);
+		g.setColor(Color.LIGHT_GRAY);
+		g.drawRect(x-4, y-8, 20, 3);
 		
 		//still player
 		if(velX == 0) {
