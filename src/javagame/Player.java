@@ -32,12 +32,12 @@ public class Player extends GameObject {
 		
 		isAttacking = false;
 		faceRight = true;
-		playerWalk = new SpriteAnimation(2,tex.player[1],tex.player[2],tex.player[1],tex.player[3],tex.player[1]);
-		playerWalkLeft = new SpriteAnimation(2,tex.player[4],tex.player[5],tex.player[6],tex.player[5],tex.player[4]);
-		playerAttackRight = new SpriteAnimation(2,tex.player[7],tex.player[8],tex.player[9]);
-		playerAttackLeft = new SpriteAnimation(2,tex.player[10],tex.player[11],tex.player[12]);
-		playerAttackRightStill = new SpriteAnimation(2,tex.player[13],tex.player[14],tex.player[15]);
-		playerAttackLeftStill = new SpriteAnimation(2,tex.player[16],tex.player[17],tex.player[18]);
+		playerWalk = new SpriteAnimation(1,tex.player[1],tex.player[2],tex.player[1],tex.player[3],tex.player[1]);
+		playerWalkLeft = new SpriteAnimation(1,tex.player[4],tex.player[5],tex.player[6],tex.player[5],tex.player[4]);
+		playerAttackRight = new SpriteAnimation(1,tex.player[7],tex.player[8],tex.player[9]);
+		playerAttackLeft = new SpriteAnimation(1,tex.player[10],tex.player[11],tex.player[12]);
+		playerAttackRightStill = new SpriteAnimation(1,tex.player[13],tex.player[14],tex.player[15]);
+		playerAttackLeftStill = new SpriteAnimation(1,tex.player[16],tex.player[17],tex.player[18]);
 
 	}
 	public Rectangle getBounds() {
