@@ -48,6 +48,8 @@ public class MouseInput extends MouseAdapter implements MouseListener{
 					if(Menu.menuState == MENU.PAUSE) {
 						Menu.menuState = MENU.START;
 						Game.hasBegun = false;
+						Game.action = 0;
+						Game.currentLevel = 1;
 					} else {
 						Menu.menuState = MENU.CREDITS;
 					}
