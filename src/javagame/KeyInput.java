@@ -86,6 +86,8 @@ public class KeyInput extends KeyAdapter {
 				Game.state = STATE.MENU;
 				Menu.menuState = MENU.START;
 				Game.hasBegun = false;
+				Game.action = 0;
+				Game.currentLevel = 1;
 			}
 		}
 		if(Game.state == STATE.GAME) {
